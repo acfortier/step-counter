@@ -47,15 +47,13 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
         map.setMyLocationEnabled(true);
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(bestProvider);
+        Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
         if (location != null) {
             onLocationChanged(location);
         }
 
-        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 20000, 0, this);
 
     }
 
