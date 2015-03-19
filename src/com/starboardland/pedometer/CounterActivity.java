@@ -20,7 +20,7 @@ public class CounterActivity extends Activity implements SensorEventListener {
     boolean activityRunning;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 1200;//todo change back to 120000
+    private static final int TIME_INTERVAL = 12000;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
     private int previousCount = 0;
     StepDatabaseHelper db;
@@ -66,8 +66,11 @@ public class CounterActivity extends Activity implements SensorEventListener {
             int i = 0;
             @Override
             public void onTick(long l) {
-                System.out.println("timer clicking");
-                count.setText("ticking" + i++);
+                db.insertSteps(currentCount - countBase);
+                counts.add(currentCount - countBase);
+                countBase = currentCount;
+                segmentCount++;
+                count.setText("Segment" + (segmentCount + 1) + " steps: " + (currentCount - countBase));
             }
 
             public void onFinish(){
