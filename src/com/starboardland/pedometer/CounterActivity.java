@@ -41,9 +41,9 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     private GoogleMap map;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 6000;//todo change back to 120000
+    private static final int TIME_INTERVAL = 120000;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
-    private int previousCount = 0;
+    private int previousCount = 0; 
     StepDatabaseHelper db;
     LinkedList<Float> counts = new LinkedList<Float>();
     List<Float> segs = new ArrayList<Float>();
