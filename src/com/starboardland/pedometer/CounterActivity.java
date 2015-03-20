@@ -150,8 +150,9 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 
             public void onFinish(){
                 counting = false;
-                toast();
+                segs.add(currentCount - countBase);
                 segmentCount++;
+                toast();
                 total.setText("Total Steps: " + (int)currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
@@ -164,7 +165,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 
             private void toast(){
                 Context context = getApplicationContext();
-                CharSequence text = "Segment " + (segmentCount) + " steps: " + segs.get(segmentCount);
+                CharSequence text = "Segment " + segmentCount + " steps: " + segs.get(segmentCount);
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
