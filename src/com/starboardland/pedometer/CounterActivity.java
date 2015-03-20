@@ -131,7 +131,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
                 segmentCount++;
-                currentSeg.setText("Segment" + segmentCount + " steps: " + (currentCount - countBase));
+                currentSeg.setText("Segment" + segmentCount + " steps: " + (int)(currentCount - countBase));
 
                 if(segmentCount < TOTAL_SEGS) {
                     currentSeg = segments[segmentCount];
@@ -180,7 +180,8 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
         if (activityRunning) {
 //            count.setText(String.valueOf(event.values[0]));
             currentCount = event.values[0];
-            currentSeg.setText("Segment" + (segmentCount + 1) + String.valueOf(currentCount - countBase));
+//            currentSeg.setText("Segment" + segmentCount + String.valueOf((currentCount - countBase));
+            currentSeg.setText("Segment" + segmentCount + " steps: " + (int)(currentCount - countBase));
         }
 
     }
