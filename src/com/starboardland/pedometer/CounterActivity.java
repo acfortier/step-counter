@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CounterActivity extends Activity implements SensorEventListener {
+//public class CounterActivity extends Activity implements SensorEventListener {
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
