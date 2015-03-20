@@ -39,7 +39,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     private GoogleMap map;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 6000;//todo change back to 120000
+    private static final int TIME_INTERVAL = 1500;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
     private int previousCount = 0;
     StepDatabaseHelper db;
@@ -73,11 +73,10 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
         segments[6] = (TextView) findViewById(R.id.count7);
         segments[7] = (TextView) findViewById(R.id.count8);
         total       = (TextView) findViewById(R.id.total);
-        for(int i = 0; i < TOTAL_SEGS; ++i){
-//            segments[i].setVisibility(View.INVISIBLE);
-        }
+
         currentSeg = segments[0];
-        currentSeg.setVisibility(View.VISIBLE);
+//        currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase));
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         if (!isGooglePlayServicesAvailable()) {
@@ -123,28 +122,33 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 //            }
 //        }, TIME_INTERVAL, TIME_INTERVAL);
 //        System.out.println("=====" + db.getLastCount());
-        new CountDownTimer(TIME_INTERVAL*(TOTAL_SEGS+1), TIME_INTERVAL){ //todo change this to 120000(?)
-            int i = 0;
+        new CountDownTimer(TIME_INTERVAL*TOTAL_SEGS + 200, TIME_INTERVAL){ //todo change this to 120000(?)
+            boolean started = false;
             @Override
             public void onTick(long l) {
                 db.insertSteps(currentCount - countBase);
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
 
-                toast();
-
-                segmentCount++;
-                currentSeg.setText("Segment" + segmentCount + " steps: " + (int)(currentCount - countBase));
-
-                if(segmentCount < TOTAL_SEGS) {
-                    currentSeg = segments[segmentCount];
-//                    currentSeg.setVisibility(View.VISIBLE);
+                if(!started ){
+                    currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
+                    started = true;
+                    return;
                 }
-                //todo add toast
+
+
+                currentSeg = segments[++segmentCount];
+                toast();
+                countBase = currentCount;
+
+                currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
+
             }
 
             public void onFinish(){
+                segmentCount++;
                 toast();
+                counting = false;
                 total.setText("Total Steps: " + (int)currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
@@ -189,11 +193,11 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (activityRunning) {
+        if (activityRunning && counting) {
 //            count.setText(String.valueOf(event.values[0]));
             currentCount = event.values[0];
 //            currentSeg.setText("Segment" + segmentCount + String.valueOf((currentCount - countBase));
-            currentSeg.setText("Segment" + segmentCount + " steps: " + (int)(currentCount - countBase));
+            currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase));
         }
 
     }
