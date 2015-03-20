@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,11 +41,12 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     private GoogleMap map;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 1500;//todo change back to 120000
+    private static final int TIME_INTERVAL = 6000;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
     private int previousCount = 0;
     StepDatabaseHelper db;
     LinkedList<Float> counts = new LinkedList<Float>();
+    List<Float> segs = new ArrayList<Float>();
     int segmentCount = 0;
     boolean counting = true;
     float currentCount = 0;
@@ -126,29 +129,29 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
             boolean started = false;
             @Override
             public void onTick(long l) {
+                segs.add(currentCount - countBase);
                 db.insertSteps(currentCount - countBase);
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
 
                 if(!started ){
-                    currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
+                    currentSeg.setText("Segment " + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
                     started = true;
                     return;
                 }
-
 
                 currentSeg = segments[++segmentCount];
                 toast();
                 countBase = currentCount;
 
-                currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
+                currentSeg.setText("Segment " + (segmentCount+1) + " steps: " + (int)(currentCount - countBase) );
 
             }
 
             public void onFinish(){
                 counting = false;
-                segmentCount++;
                 toast();
+                segmentCount++;
                 total.setText("Total Steps: " + (int)currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
@@ -161,7 +164,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 
             private void toast(){
                 Context context = getApplicationContext();
-                CharSequence text = "Segment" + segmentCount + " steps: " + (int)(currentCount - countBase);
+                CharSequence text = "Segment " + (segmentCount) + " steps: " + segs.get(segmentCount);
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
@@ -197,7 +200,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 //            count.setText(String.valueOf(event.values[0]));
             currentCount = event.values[0];
 //            currentSeg.setText("Segment" + segmentCount + String.valueOf((currentCount - countBase));
-            currentSeg.setText("Segment" + (segmentCount+1) + " steps: " + (int)(currentCount - countBase));
+            currentSeg.setText("Segment " + (segmentCount+1) + " steps: " + (int)(currentCount - countBase));
         }
 
     }
