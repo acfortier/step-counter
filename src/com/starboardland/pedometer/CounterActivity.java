@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +32,14 @@ import com.google.android.gms.maps.model.LatLng;
 public class CounterActivity extends Activity implements SensorEventListener, LocationListener {
 
     private SensorManager sensorManager;
-    private TextView count;
+    private TextView[] segments = new TextView[TOTAL_SEGS];
+    private TextView currentSeg;
     boolean activityRunning;
     private MapFragment mapFrag;
     private GoogleMap map;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 12000;//todo change back to 120000
+    private static final int TIME_INTERVAL = 1200;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
     private int previousCount = 0;
     StepDatabaseHelper db;
@@ -46,6 +48,15 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     boolean counting = true;
     float currentCount = 0;
     float countBase = 0;
+    private TextView total;
+
+//    private TextView count2;
+//    private TextView count3;
+//    private TextView count4;
+//    private TextView count5;
+//    private TextView count6;
+//    private TextView count7;
+//    private TextView count8;
     //===========jun-end
 
 
@@ -53,8 +64,20 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        count = (TextView) findViewById(R.id.count);
-
+        segments[0] = (TextView) findViewById(R.id.count);
+        segments[1] = (TextView) findViewById(R.id.count2);
+        segments[2] = (TextView) findViewById(R.id.count3);
+        segments[3] = (TextView) findViewById(R.id.count4);
+        segments[4] = (TextView) findViewById(R.id.count5);
+        segments[5] = (TextView) findViewById(R.id.count6);
+        segments[6] = (TextView) findViewById(R.id.count7);
+        segments[7] = (TextView) findViewById(R.id.count8);
+        total       = (TextView) findViewById(R.id.total);
+        for(int i = 0; i < TOTAL_SEGS; ++i){
+//            segments[i].setVisibility(View.INVISIBLE);
+        }
+        currentSeg = segments[0];
+        currentSeg.setVisibility(View.VISIBLE);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         if (!isGooglePlayServicesAvailable()) {
@@ -108,12 +131,17 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
                 segmentCount++;
-                count.setText("Segment" + segmentCount + " steps: " + (currentCount - countBase));
+                currentSeg.setText("Segment" + segmentCount + " steps: " + (currentCount - countBase));
+
+                if(segmentCount < TOTAL_SEGS) {
+                    currentSeg = segments[segmentCount];
+//                    currentSeg.setVisibility(View.VISIBLE);
+                }
                 //todo add toast
             }
 
             public void onFinish(){
-
+                total.setText("Total Steps: " + currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
 //                }else {
@@ -152,7 +180,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
         if (activityRunning) {
 //            count.setText(String.valueOf(event.values[0]));
             currentCount = event.values[0];
-            count.setText("Segment" + (segmentCount + 1) + String.valueOf(currentCount - countBase));
+            currentSeg.setText("Segment" + (segmentCount + 1) + String.valueOf(currentCount - countBase));
         }
 
     }
