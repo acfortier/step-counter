@@ -2,7 +2,14 @@ package com.starboardland.pedometer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.hardware.*;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.TextView;
@@ -14,10 +21,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class CounterActivity extends Activity implements SensorEventListener {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+
+public class CounterActivity extends Activity implements SensorEventListener, LocationListener {
 
     private SensorManager sensorManager;
     private TextView count;
     boolean activityRunning;
+    private MapFragment mapFrag;
+    private GoogleMap map;
 
     //==========jun-start
     private static final int TIME_INTERVAL = 12000;//todo change back to 120000
@@ -39,6 +56,27 @@ public class CounterActivity extends Activity implements SensorEventListener {
         count = (TextView) findViewById(R.id.count);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        if (!isGooglePlayServicesAvailable()) {
+            finish();
+        }
+
+        mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+
+        map = mapFrag.getMap();
+        map.setMyLocationEnabled(true);
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String bestProvider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(bestProvider);
+
+        if (location != null) {
+            onLocationChanged(location);
+        }
+
+        locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+
 
         //========jun-start
         db = StepDatabaseHelper.getInstance(getApplicationContext());//todo is this right?
@@ -120,4 +158,42 @@ public class CounterActivity extends Activity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        LatLng latLng = new LatLng(latitude, longitude);
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // TODO Auto-generated method stub
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+            return false;
+        }
+    }
+
 }
