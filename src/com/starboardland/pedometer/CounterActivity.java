@@ -39,7 +39,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
     private GoogleMap map;
 
     //==========jun-start
-    private static final int TIME_INTERVAL = 1200;//todo change back to 120000
+    private static final int TIME_INTERVAL = 6000;//todo change back to 120000
     private static final int TOTAL_SEGS = 8;
     private int previousCount = 0;
     StepDatabaseHelper db;
@@ -130,6 +130,9 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
                 db.insertSteps(currentCount - countBase);
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
+
+                toast();
+
                 segmentCount++;
                 currentSeg.setText("Segment" + segmentCount + " steps: " + (int)(currentCount - countBase));
 
@@ -141,7 +144,8 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
             }
 
             public void onFinish(){
-                total.setText("Total Steps: " + currentCount);
+                toast();
+                total.setText("Total Steps: " + (int)currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
 //                }else {
@@ -149,6 +153,14 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 //                    counts.add(currentCount - countBase);
 //                    countBase = currentCount;
 //                }
+            }
+
+            private void toast(){
+                Context context = getApplicationContext();
+                CharSequence text = "Segment" + segmentCount + " steps: " + (int)(currentCount - countBase);
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
         }.start();
         //========jun-end
