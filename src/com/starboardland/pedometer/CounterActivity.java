@@ -122,7 +122,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 //            }
 //        }, TIME_INTERVAL, TIME_INTERVAL);
 //        System.out.println("=====" + db.getLastCount());
-        new CountDownTimer(TIME_INTERVAL*TOTAL_SEGS + 200, TIME_INTERVAL){ //todo change this to 120000(?)
+        new CountDownTimer(TIME_INTERVAL*TOTAL_SEGS + 200, TIME_INTERVAL){
             boolean started = false;
             @Override
             public void onTick(long l) {
@@ -146,9 +146,9 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
             }
 
             public void onFinish(){
+                counting = false;
                 segmentCount++;
                 toast();
-                counting = false;
                 total.setText("Total Steps: " + (int)currentCount);
 //                if(++segmentCount == TOTAL_SEGS){
 //                    counting = false;
