@@ -100,7 +100,7 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
 //            }
 //        }, TIME_INTERVAL, TIME_INTERVAL);
 //        System.out.println("=====" + db.getLastCount());
-        new CountDownTimer(TIME_INTERVAL*TOTAL_SEGS, TIME_INTERVAL){ //todo change this to 120000(?)
+        new CountDownTimer(TIME_INTERVAL*(TOTAL_SEGS+1), TIME_INTERVAL){ //todo change this to 120000(?)
             int i = 0;
             @Override
             public void onTick(long l) {
@@ -108,17 +108,19 @@ public class CounterActivity extends Activity implements SensorEventListener, Lo
                 counts.add(currentCount - countBase);
                 countBase = currentCount;
                 segmentCount++;
-                count.setText("Segment" + (segmentCount + 1) + " steps: " + (currentCount - countBase));
+                count.setText("Segment" + segmentCount + " steps: " + (currentCount - countBase));
+                //todo add toast
             }
 
             public void onFinish(){
-                if(++segmentCount == TOTAL_SEGS){
-                    counting = false;
-                }else {
-                    db.insertSteps(currentCount - countBase);
-                    counts.add(currentCount - countBase);
-                    countBase = currentCount;
-                }
+
+//                if(++segmentCount == TOTAL_SEGS){
+//                    counting = false;
+//                }else {
+//                    db.insertSteps(currentCount - countBase);
+//                    counts.add(currentCount - countBase);
+//                    countBase = currentCount;
+//                }
             }
         }.start();
         //========jun-end
